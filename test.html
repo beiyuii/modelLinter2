@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.IO Chat Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        // 当页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', (event) => {
+            // 初始化Socket.IO客户端
+            const socket = io('http://127.0.0.1:8887');
+
+            // 获取DOM元素
+            const inputElement = document.getElementById('inputMessage');
+            const sendButton = document.getElementById('sendButton');
+            const messageArea = document.getElementById('messageArea');
+
+            // 监听服务器发来的'response'事件
+            socket.on('message', function(chunk) {
+                    // 逐步构建完整消息
+                    // alert(chunk)
+                    // 当接收到足够的数据时进行处理
+                    console.log(chunk)
+
+        });
+
+            // socket.on('response', (msg) => {
+            //     const newMessage = document.createElement('div');
+            //     newMessage.textContent = msg;
+            //     messageArea.appendChild(newMessage);
+            //     // 滚动到底部
+            //     messageArea.scrollTop = messageArea.scrollHeight;
+            // });
+
+            // 当发送按钮被点击时触发
+            sendButton.addEventListener('click', () => {
+                const message = inputElement.value;
+                if (message.trim()) {
+                    socket.emit('message', message);
+                    inputElement.value = ''; // 清空输入框
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Socket.IO Chat Example</h1>
+    <div id="messageArea" style="border: 1px solid black; height: 300px; overflow-y: scroll;"></div>
+    <input type="text" id="inputMessage" placeholder="Type your message here...">
+    <button id="sendButton">Send</button>
+</body>
+</html>

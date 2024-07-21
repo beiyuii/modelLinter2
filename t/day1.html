@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat with AI</title>
+    <script src="https://cdn.socket.io/socket.io-4.5.2.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #output {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div id="output"></div>
+<textarea id="inputField" placeholder="Type your message here..."></textarea>
+<button id="sendButton">Send</button>
+
+<script>
+    const socket = io('http://127.0.0.1:8887');
+
+    socket.on('connect', () => {
+        console.log('Connected to server');
+    });
+
+    socket.on('response', (chunk) => {
+        // 逐步显示接收到的流数据
+        document.getElementById('output').innerHTML += chunk + '<br>';
+        // Auto-scroll to bottom
+        const outputDiv = document.getElementById('output');
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+    });
+
+    // 发送消息到服务器
+    document.getElementById('sendButton').addEventListener('click', () => {
+        const message = document.getElementById('inputField').value;
+        socket.emit('message', message);
+        document.getElementById('inputField').value = ''; // Clear input field
+    });
+</script>
+
+</body>
+</html>
