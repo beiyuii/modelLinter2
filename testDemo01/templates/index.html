@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天应用</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+</head>
+<body>
+    <h1>聊天应用</h1>
+    <div id="messages"></div>
+    <input id="messageInput" placeholder="输入消息...">
+    <button id="sendButton">发送</button>
+
+    <script>
+        const socket = io();
+
+        document.getElementById('sendButton').onclick = function() {
+            const message = document.getElementById('messageInput').value;
+            socket.emit('message', message);
+            document.getElementById('messageInput').value = '';
+        };
+
+        socket.on('response', function(data) {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += '<div>' + data + '</div>';
+        });
+    </script>
+</body>
+</html>

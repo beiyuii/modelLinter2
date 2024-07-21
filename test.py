@@ -22,14 +22,16 @@ def handle_disconnect():
 
 @socketio.on('message')
 def handle_message(data):
+    global received_data
     print('received message:', data)
+    received_data = ""
     response = ai(data)
     for chunk in response:
-        print(chunk.choices[0].delta.content)
         message = chunk.choices[0].delta.content
-        # emit('response', message)
-        socketio.send(message)
-        # print(66666)  # 确认 emit 是否立即执行
+        if message is not None:
+            received_data += message
+            emit('response', message)
+            socketio.sleep(0)  # Add this line to allow output during the loop
 
 
 def ai(msg):
@@ -54,4 +56,4 @@ def ai(msg):
     #     print(chunk.choices[0].delta)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=8887)
+    socketio.run(app, host='0.0.0.0', port=8887, debug=True)
